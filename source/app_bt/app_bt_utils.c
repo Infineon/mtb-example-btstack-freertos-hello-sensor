@@ -1,43 +1,43 @@
 /******************************************************************************
-* File Name:   app_bt_utils.c
-*
-* Description: This file consists of the utility functions that will help debugging and developing the
-*              applications easier with much more meaningful information.
-*
-* Related Document: See README.md
-*
-*******************************************************************************
-* Copyright 2021-2022, Cypress Semiconductor Corporation (an Infineon company) or
-* an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
-*
-* This software, including source code, documentation and related
-* materials ("Software") is owned by Cypress Semiconductor Corporation
-* or one of its affiliates ("Cypress") and is protected by and subject to
-* worldwide patent protection (United States and foreign),
-* United States copyright laws and international treaty provisions.
-* Therefore, you may use this Software only as provided in the license
-* agreement accompanying the software package from which you
-* obtained this Software ("EULA").
-* If no EULA applies, Cypress hereby grants you a personal, non-exclusive,
-* non-transferable license to copy, modify, and compile the Software
-* source code solely for use in connection with Cypress's
-* integrated circuit products.  Any reproduction, modification, translation,
-* compilation, or representation of this Software except as specified
-* above is prohibited without the express written permission of Cypress.
-*
-* Disclaimer: THIS SOFTWARE IS PROVIDED AS-IS, WITH NO WARRANTY OF ANY KIND,
-* EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, NONINFRINGEMENT, IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. Cypress
-* reserves the right to make changes to the Software without notice. Cypress
-* does not assume any liability arising out of the application or use of the
-* Software or any product or circuit described in the Software. Cypress does
-* not authorize its products for use in any products where a malfunction or
-* failure of the Cypress product may reasonably be expected to result in
-* significant property damage, injury or death ("High Risk Product"). By
-* including Cypress's product in a High Risk Product, the manufacturer
-* of such system or application assumes all risk of such use and in doing
-* so agrees to indemnify Cypress against all liability.
-*******************************************************************************/
+ * File Name:   app_bt_utils.c
+ *
+ * Description: This file consists of the utility functions that will help debugging and developing the
+ *              applications easier with much more meaningful information.
+ *
+ * Related Document: See README.md
+ *
+ *******************************************************************************
+ * Copyright 2021-2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
+ *
+ * This software, including source code, documentation and related
+ * materials ("Software") is owned by Cypress Semiconductor Corporation
+ * or one of its affiliates ("Cypress") and is protected by and subject to
+ * worldwide patent protection (United States and foreign),
+ * United States copyright laws and international treaty provisions.
+ * Therefore, you may use this Software only as provided in the license
+ * agreement accompanying the software package from which you
+ * obtained this Software ("EULA").
+ * If no EULA applies, Cypress hereby grants you a personal, non-exclusive,
+ * non-transferable license to copy, modify, and compile the Software
+ * source code solely for use in connection with Cypress's
+ * integrated circuit products.  Any reproduction, modification, translation,
+ * compilation, or representation of this Software except as specified
+ * above is prohibited without the express written permission of Cypress.
+ *
+ * Disclaimer: THIS SOFTWARE IS PROVIDED AS-IS, WITH NO WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, NONINFRINGEMENT, IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. Cypress
+ * reserves the right to make changes to the Software without notice. Cypress
+ * does not assume any liability arising out of the application or use of the
+ * Software or any product or circuit described in the Software. Cypress does
+ * not authorize its products for use in any products where a malfunction or
+ * failure of the Cypress product may reasonably be expected to result in
+ * significant property damage, injury or death ("High Risk Product"). By
+ * including Cypress's product in a High Risk Product, the manufacturer
+ * of such system or application assumes all risk of such use and in doing
+ * so agrees to indemnify Cypress against all liability.
+ *******************************************************************************/
 
 /******************************************************************************
  * Header Files
@@ -46,40 +46,39 @@
 #include "wiced_bt_dev.h"
 
 /****************************************************************************
- * FUNCTION DEFINITIONS
+ * Function Definitions
  ***************************************************************************/
-/**************************************************************************************************
-* Function Name: print_bd_address()
-***************************************************************************************************
-* Summary:
-*   This is the utility function that prints the address of the Bluetooth device
-*
-* Parameters:
-*   wiced_bt_device_address_t bdadr                : Bluetooth address
-*
-* Return:
-*  void
-*
-**************************************************************************************************/
+
+/**
+ * Function Name: print_bd_address()
+ *
+ * Function Description:
+ *   @brief This is the utility function that prints the address of the
+ *          Bluetooth device
+ *
+ *   @param wiced_bt_device_address_t bdadr: Bluetooth address
+ *
+ *   @return None
+ *
+ */
 void print_bd_address(wiced_bt_device_address_t bdadr)
 {
     printf("%02X:%02X:%02X:%02X:%02X:%02X \n",bdadr[0],bdadr[1],bdadr[2],bdadr[3],bdadr[4],bdadr[5]);
 }
 
-/*******************************************************************************
+/**
 * Function Name: void print_array( void* to_print, uint16_t len )
-********************************************************************************
-* Summary:
-*   This is a utility function that prints the specified number of values from memory
 *
-* Parameters:
-*   void* to_print                : Pointer to the location to print
-*   uint16_t                    : Number of bytes to print
+* Function Description:
+*   @brief This is a utility function that prints the specified number of
+*          values from memory
 *
-* Return:
-*  void
+*   @param void* to_print       : Pointer to the location to print
+*   @param uint16_t             : Number of bytes to print
 *
-********************************************************************************/
+*   @return void
+*
+*/
 void print_array(void * to_print, uint16_t len)
 {
     uint16_t counter;
@@ -96,21 +95,19 @@ void print_array(void * to_print, uint16_t len)
 
 }
 
-/*******************************************************************************
-* Function Name: get_bt_event_name
-********************************************************************************
-* Summary:
-* The function converts the wiced_bt_management_evt_t enum value to its
-* corresponding string literal. This will help the programmer to debug easily
-* with log traces without navigating through the source code.
-*
-* Parameters:
-*  wiced_bt_management_evt_t event: Bluetooth management event type
-*
-* Return:
-*  wiced_bt_management_evt_t
-*
-*******************************************************************************/
+/**
+ * Function Name: get_bt_event_name
+ *
+ * Function Description:
+ * The function converts the wiced_bt_management_evt_t enum value to its
+ * corresponding string literal. This will help the programmer to debug easily
+ * with log traces without navigating through the source code.
+ *
+ *   @param wiced_bt_management_evt_t event: Bluetooth management event type
+ *
+ *   @return wiced_bt_management_evt_t
+ *
+ */
 const char *get_bt_event_name(wiced_bt_management_evt_t event)
 {
 
@@ -156,21 +153,20 @@ const char *get_bt_event_name(wiced_bt_management_evt_t event)
     return "UNKNOWN_EVENT";
 }
 
-/*******************************************************************************
-* Function Name: get_bt_advert_mode_name
-********************************************************************************
-* Summary:
-* The function converts the wiced_bt_ble_advert_mode_t enum value to its corresponding
-* string literal. This will help the programmer to debug easily with log traces
-* without navigating through the source code.
-*
-* Parameters:
-*  wiced_bt_ble_advert_mode_t mode: Bluetooth advertisement mode type
-*
-* Return:
-*  wiced_bt_ble_advert_mode_t
-*
-*******************************************************************************/
+/**
+ * Function Name: get_bt_advert_mode_name
+ *
+ * Function Description:
+ *   @brief The function converts the wiced_bt_ble_advert_mode_t enum value
+ *          to its corresponding string literal. This will help the programmer
+ *          to debug easily with log traces without navigating through the
+ *          source code.
+ *
+ *   @param wiced_bt_ble_advert_mode_t mode: Bluetooth advertisement mode type
+ *
+ *   @return wiced_bt_ble_advert_mode_t
+ *
+ */
 const char *get_bt_advert_mode_name(wiced_bt_ble_advert_mode_t mode)
 {
 
@@ -192,21 +188,20 @@ const char *get_bt_advert_mode_name(wiced_bt_ble_advert_mode_t mode)
     return "UNKNOWN_MODE";
 }
 
-/*******************************************************************************
-* Function Name: get_bt_gatt_disconn_reason_name
-********************************************************************************
-* Summary:
-* The function converts the wiced_bt_gatt_disconn_reason_t enum value to its corresponding
-* string literal. This will help the programmer to debug easily with log traces
-* without navigating through the source code.
-*
-* Parameters:
-*  wiced_bt_gatt_disconn_reason_t reason: GATT Disconnection reason
-*
-* Return:
-*  wiced_bt_gatt_disconn_reason_t
-*
-*******************************************************************************/
+/**
+ * Function Name: get_bt_gatt_disconn_reason_name
+ *
+ * Function Description:
+ *   @brief The function converts the wiced_bt_gatt_disconn_reason_t enum value
+ *          to its corresponding string literal. This will help the programmer
+ *          to debug easily with log traces without navigating through the
+ *          source code.
+ *
+ *   @param wiced_bt_gatt_disconn_reason_t reason: GATT Disconnection reason
+ *
+ *   @return wiced_bt_gatt_disconn_reason_t
+ *
+ */
 const char *get_bt_gatt_disconn_reason_name(wiced_bt_gatt_disconn_reason_t reason)
 {
 
@@ -227,21 +222,19 @@ const char *get_bt_gatt_disconn_reason_name(wiced_bt_gatt_disconn_reason_t reaso
     return "UNKNOWN_REASON";
 }
 
-/*******************************************************************************
-* Function Name: get_bt_gatt_status_name
-********************************************************************************
-* Summary:
-* The function converts the wiced_bt_gatt_status_t enum value to its corresponding
-* string literal. This will help the programmer to debug easily with log traces
-* without navigating through the source code.
-*
-* Parameters:
-*  wiced_bt_gatt_status_t status: GATT status
-*
-* Return:
-*  wiced_bt_gatt_status_t
-*
-*******************************************************************************/
+/**
+ * Function Name: get_bt_gatt_status_name
+ *
+ * Function Description:
+ *   @brief The function converts the wiced_bt_gatt_status_t enum value
+ *   to its corresponding string literal. This will help the programmer to debug
+ *   easily with log traces without navigating through the source code.
+ *
+ *   @param wiced_bt_gatt_status_t status: GATT status
+ *
+ *   @return wiced_bt_gatt_status_t
+ *
+ */
 const char *get_bt_gatt_status_name(wiced_bt_gatt_status_t status)
 {
 
@@ -292,21 +285,19 @@ const char *get_bt_gatt_status_name(wiced_bt_gatt_status_t status)
     return "UNKNOWN_STATUS";
 }
 
-/*******************************************************************************
-* Function Name: get_bt_smp_status_name
-********************************************************************************
-* Summary:
-* The function converts the wiced_bt_smp_status_t enum value to its corresponding
-* string literal. This will help the programmer to debug easily with log traces
-* without navigating through the source code.
-*
-* Parameters:
-*  wiced_bt_smp_status_t status: GATT status
-*
-* Return:
-*  wiced_bt_smp_status_t
-*
-*******************************************************************************/
+/**
+ * Function Name: get_bt_smp_status_name
+ *
+ * Function Description:
+ *   @brief The function converts the wiced_bt_smp_status_t enum value to its
+ *   corresponding string literal. This will help the programmer to debug easily
+ *   with log traces without navigating through the source code.
+ *
+ *   @param wiced_bt_smp_status_t status: GATT status
+ *
+ *   @return wiced_bt_smp_status_t
+ *
+ */
 const char *get_bt_smp_status_name(wiced_bt_smp_status_t status)
 {
 

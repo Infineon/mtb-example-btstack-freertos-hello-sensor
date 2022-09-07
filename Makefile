@@ -59,9 +59,24 @@ CONFIG=Debug
 VERBOSE=
 
 # Optionally enable app and Bluetooth protocol traces and route to BTSpy
-ENABLE_SPY_TRACES?=0
+# Not applicable for CYW920829M2EVB-01
+ENABLE_SPY_TRACES = 0
+# Specify the flash region to be used as NVRAM for bond data storage
+USE_INTERNAL_FLASH = 0
+
+ifeq ($(TARGET), $(filter $(TARGET), CY8CKIT-062-BLE CY8CPROTO-063-BLE CYBLE-416045-EVAL))
+PSOC6_BLE = 1
+DEFINES+= PSOC6_BLE
+ENABLE_SPY_TRACES = 0
+USE_INTERNAL_FLASH = 1
+endif
+
 ifeq ($(ENABLE_SPY_TRACES),1)
 DEFINES+=ENABLE_BT_SPY_LOG DEBUG_UART_BAUDRATE=3000000
+endif
+
+ifeq ($(USE_INTERNAL_FLASH),1)
+DEFINES+=USE_INTERNAL_FLASH
 endif
 
 ################################################################################
@@ -78,10 +93,14 @@ endif
 # ... then code in directories named COMPONENT_foo and COMPONENT_bar will be
 # added to the build
 #
-COMPONENTS=FREERTOS WICED_BLE
-
+ifeq ($(PSOC6_BLE), 1)
+COMPONENTS=FREERTOS WICED_BLE CM0P_BLESS
 # Like COMPONENTS, but disable optional code that was enabled by default.
+DISABLE_COMPONENTS=CM0P_SLEEP
+else
+COMPONENTS=FREERTOS WICED_BLE
 DISABLE_COMPONENTS=
+endif
 
 # By default the build system automatically looks in the Makefile's directory
 # tree for source code and builds it. The SOURCES variable can be used to
@@ -124,14 +143,26 @@ LDFLAGS=
 LDLIBS=
 
 # Path to the linker script to use (if empty, use the default linker script).
-LINKER_SCRIPT=
+ifeq ($(PSOC6_BLE), 1)
+ifeq ($(TOOLCHAIN), GCC_ARM)
+LINKER_SCRIPT=$(SEARCH_mtb-pdl-cat1)/devices/COMPONENT_CAT1A/templates/COMPONENT_MTB/COMPONENT_CM4/TOOLCHAIN_GCC_ARM/cy8c6xx7_cm4_dual_cm0p_bless.ld
+else ifeq ($(TOOLCHAIN), ARM)
+LINKER_SCRIPT=$(SEARCH_mtb-pdl-cat1)/devices/COMPONENT_CAT1A/templates/COMPONENT_MTB/COMPONENT_CM4/TOOLCHAIN_ARM/cy8c6xx7_cm4_dual_cm0p_bless.sct
+else ifeq ($(TOOLCHAIN), IAR)
+LINKER_SCRIPT=$(SEARCH_mtb-pdl-cat1)/devices/COMPONENT_CAT1A/templates/COMPONENT_MTB/COMPONENT_CM4/TOOLCHAIN_IAR/cy8c6xx7_cm4_dual_cm0p_bless.icf
+endif
+endif
 
+ifeq ($(TARGET), CYW920829M2EVB-01)
+ifneq ($(TOOLCHAIN), GCC_ARM)
+$(error Only GCC_ARM is supported at this moment)
+endif
+endif
 # Custom pre-build commands to run.
 PREBUILD=
 
 # Custom post-build commands to run.
 POSTBUILD=
-
 
 ################################################################################
 # Paths

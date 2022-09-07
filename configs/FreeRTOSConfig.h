@@ -107,7 +107,7 @@ extern uint32_t SystemCoreClock;
 #define configUSE_TIMERS                        1
 #define configTIMER_TASK_PRIORITY               3
 #define configTIMER_QUEUE_LENGTH                10
-#define configTIMER_TASK_STACK_DEPTH            ( configMINIMAL_STACK_SIZE * 2 )
+#define configTIMER_TASK_STACK_DEPTH            (configMINIMAL_STACK_SIZE * 2)
 
 
 /*
@@ -117,6 +117,9 @@ interrupt safe FreeRTOS API functions can be called.
 !!!! configMAX_SYSCALL_INTERRUPT_PRIORITY must not be set to zero !!!!
 See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html
 */
+
+#define configKERNEL_INTERRUPT_PRIORITY         0xFF
+
 #define configMAX_SYSCALL_INTERRUPT_PRIORITY    0x3F
 
 /* configMAX_API_CALL_INTERRUPT_PRIORITY is a new name for configMAX_SYSCALL_INTERRUPT_PRIORITY

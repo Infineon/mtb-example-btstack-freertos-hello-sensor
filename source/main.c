@@ -6,7 +6,6 @@
 *
 * Related Document: See README.md
 *
-*
 *******************************************************************************
 * Copyright 2021-2022, Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
@@ -43,69 +42,41 @@
 /*******************************************************************************
 * Header Files
 *******************************************************************************/
-#include "wiced_bt_stack.h"
+#include "app_flash_common.h"
+#include "app_bt_bonding.h"
 #include "cybsp.h"
 #include "cy_retarget_io.h"
+#include "mtb_kvstore.h"
 #include <FreeRTOS.h>
 #include <task.h>
-#include <queue.h>
-#include <string.h>
-#include "cybt_platform_trace.h"
-#include "wiced_memory.h"
-#include "cybt_debug_uart.h"
-#include "cyhal.h"
-#include "stdio.h"
-#include "GeneratedSource/cycfg_gatt_db.h"
-#include "GeneratedSource/cycfg_bt_settings.h"
-#include "GeneratedSource/cycfg_gap.h"
-#include "wiced_bt_dev.h"
-#include "app_bt_utils.h"
-#include "hello_sensor.h"
-#include "cy_serial_flash_qspi.h"
-#include "app_serial_flash.h"
-#include "mtb_kvstore.h"
-#include "cybt_platform_config.h"
+#include "cycfg_bt_settings.h"
+#include "wiced_bt_stack.h"
 #include "cybsp_bt_config.h"
-
-/*******************************************************************************
-*        Macro Definitions
-*******************************************************************************/
-
-/* FreeRTOS Task Configurations for Hello Sensor BTN TASK */
-
-/* Stack size for Hello Sensor BTN task */
-#define BTN_TASK_STACK_SIZE                 (512u)
-
-/* Task Priority of Hello Sensor BTN Task */
-#define BTN_TASK_PRIORITY                   (2)
-
-/*******************************************************************************
-* Variable Definitions
-*******************************************************************************/
-
-/*Kvstore block device*/
-mtb_kvstore_bd_t                    block_device;
-
-extern TaskHandle_t button_handle;
+#include "cybt_platform_config.h"
+#include "app_bt_event_handler.h"
+#include "app_bt_gatt_handler.h"
+#include "app_hw_device.h"
+#include "app_bt_utils.h"
+#ifdef ENABLE_BT_SPY_LOG
+#include "cybt_debug_uart.h"
+#endif
 
 /******************************************************************************
  * Function Definitions
  ******************************************************************************/
 
-/*******************************************************************************
+/**
  * Function Name : main
- * *****************************************************************************
- * Summary :
-*   Entry point to the application. Set device configuration and start BT
- *  stack initialization.  The actual application initialization will happen
- *  when stack reports that BT device is ready.
  *
- * Parameters:
- *    None
+ * Function Description :
+ *   @brief Entry point to the application. Set device configuration and start
+ *   BT stack initialization.  The actual application initialization will happen
+ *   when stack reports that BT device is ready.
  *
- * Return:
- *    None
- ******************************************************************************/
+ *   @param: None
+ *
+ *   @return: None
+ */
 int main()
 {
     cy_rslt_t cy_result;
@@ -136,34 +107,41 @@ int main()
     #else
     {
         /* Initialize retarget-io to use the debug UART port */
-        cy_retarget_io_init(CYBSP_DEBUG_UART_TX, CYBSP_DEBUG_UART_RX, CY_RETARGET_IO_BAUDRATE);
+        cy_retarget_io_init(CYBSP_DEBUG_UART_TX,
+                            CYBSP_DEBUG_UART_RX,
+                            CY_RETARGET_IO_BAUDRATE);
     }
     #endif //ENABLE_BT_SPY_LOG
 
-    printf("******************** BTSTACK FreeRTOS Example ************************\n");
-    printf("****************** Hello Sensor Application Start *******************\n");
+    printf("******************** "
+           "BTSTACK FreeRTOS Example "
+           "************************\n");
 
-   /* Configure platform specific settings for the BT device */
-   cybt_platform_config_init(&cybsp_bt_platform_cfg);
+    printf("****************** "
+           "Hello Sensor Application Start "
+           "********************\n");
 
-   /*Initialize the block device used by kv-store for performing read/write operations to the flash*/
-   app_kvstore_bd_init(&block_device);
+    /* Configure platform specific settings for the BT device */
+    cybt_platform_config_init(&cybsp_bt_platform_cfg);
 
-   /* Register call back and configuration with stack */
-   wiced_result = wiced_bt_stack_init (hello_sensor_management_callback, &wiced_bt_cfg_settings);
+    /*Initialize the block device used by kv-store for performing
+     * read/write operations to the flash*/
+    app_kvstore_bd_config(&block_device);
 
-   xTaskCreate(button_task, "Button task", BTN_TASK_STACK_SIZE, NULL, BTN_TASK_PRIORITY, &button_handle);
+    /* Register call back and configuration with stack */
+    wiced_result = wiced_bt_stack_init(app_bt_management_callback,
+                                       &wiced_bt_cfg_settings);
 
-   /* Check if stack initialization was successful */
-   if( WICED_BT_SUCCESS == wiced_result)
-   {
-       printf("Bluetooth Stack Initialization Successful \n");
-   }
-   else
-   {
-       printf("Bluetooth Stack Initialization failed!! \n");
-       CY_ASSERT(0);
-   }
+    /* Check if stack initialization was successful */
+    if(WICED_BT_SUCCESS == wiced_result)
+    {
+        printf("Bluetooth Stack Initialization Successful \n");
+    }
+    else
+    {
+        printf("Bluetooth Stack Initialization failed!! \n");
+        CY_ASSERT(0);
+    }
 
     /* Start the FreeRTOS scheduler */
     vTaskStartScheduler();
@@ -171,6 +149,5 @@ int main()
     /* Should never get here */
     CY_ASSERT(0) ;
 }
-
 
 /* END OF FILE [] */
