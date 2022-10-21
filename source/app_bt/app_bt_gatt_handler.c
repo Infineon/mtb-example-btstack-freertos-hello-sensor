@@ -499,8 +499,16 @@ app_bt_gatt_connection_down(wiced_bt_gatt_connection_status_t *p_status)
     hello_sensor_state.conn_id = 0;
 
 #ifdef PSOC6_BLE
-    /* Refer to Note 2 in Document History section of Readme.md */
-    app_bt_remove_devices_from_address_resolution_db();
+
+    result = wiced_bt_ble_address_resolution_list_clear_and_disable();
+    if(WICED_BT_SUCCESS == result)
+    {
+        printf("Address resolution list cleared successfully \n");
+    }
+    else
+    {
+        printf("Failed to clear address resolution list \n");
+    }
 #endif
 
     /* Start advertisements after disconnection */

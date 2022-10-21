@@ -67,6 +67,7 @@ bond_info_t    bond_info;
 wiced_bt_local_identity_keys_t identity_keys;
 uint16_t       peer_cccd_data[BOND_INDEX_MAX];
 
+
 #ifdef PSOC6_BLE
 typedef unsigned int BOOL32;
 extern BOOL32 btsnd_hcic_ble_set_addr_resolution_enable(uint8_t addr_resolution_enable);
@@ -444,41 +445,6 @@ void app_bt_add_devices_to_address_resolution_db(void)
     }
 }
 
-/**
-* Function Name:
-* app_bt_remove_devices_from_address_resolution_db
-*
-* Function Description:
-* @brief This function removes the bonded devices from address resolution database
-*        and disables address resolution.
-*
-* @param  None
-*
-* @return None
-*
-*/
-void app_bt_remove_devices_from_address_resolution_db(void)
-{
-    /* Go through the bond list and remove all devices from address resolution list */
-    for (uint8_t i = 0; (i < bond_info.slot_data[NUM_BONDED]) && (i < BOND_INDEX_MAX); i++)
-    {
-        /* Remove device from address resolution database */
-        wiced_result_t result = wiced_bt_dev_remove_device_from_address_resolution_db(&bond_info.link_keys[i]);
-        if (WICED_BT_SUCCESS == result)
-        {
-            printf("Device removed from address resolution database: ");
-            print_bd_address((uint8_t *)&bond_info.link_keys[i].bd_addr);
-        }
-        else
-        {
-            printf("Error removing device from address resolution database, Error Code %d \n", result);
-        }
-    }
-#ifdef PSOC6_BLE
-    /* Disable address resolution after removing all the devices from the resolution list */
-    btsnd_hcic_ble_set_addr_resolution_enable(FALSE);
-#endif
-}
 /**
 * Function Name:
 * print_bond_data

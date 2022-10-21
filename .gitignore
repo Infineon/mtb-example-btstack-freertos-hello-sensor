@@ -146,10 +146,3 @@ Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
 [Dd]esktop.ini
-
-
-.cproject
-.mtbLaunchConfigs/
-.project
-.settings/
-makefile.init

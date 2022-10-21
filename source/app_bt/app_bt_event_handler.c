@@ -109,7 +109,7 @@ app_bt_management_callback(wiced_bt_management_evt_t event, wiced_bt_management_
     wiced_bt_device_address_t local_bda = {0x00, 0xA0, 0x50,
                                            0x011, 0x44, 0x55};
 
-    printf("Event:%s\n", get_bt_event_name(event));
+    printf("Event:%s\n", get_btm_event_name(event));
 
     switch (event)
     {
@@ -288,7 +288,7 @@ app_bt_management_callback(wiced_bt_management_evt_t event, wiced_bt_management_
 
         default:
             printf("Unhandled Bluetooth Management Event: 0x%x %s\n",
-                    event, get_bt_event_name(event));
+                    event, get_btm_event_name(event));
             break;
     }
     return result;
@@ -369,9 +369,18 @@ void app_bt_application_init(void)
            get_bt_gatt_status_name(gatt_status));
 
 #ifdef PSOC6_BLE
-    /* Refer to Note 2 in Document History section of Readme.md */
-    app_bt_remove_devices_from_address_resolution_db();
+
+    result = wiced_bt_ble_address_resolution_list_clear_and_disable();
+    if(WICED_BT_SUCCESS == result)
+    {
+        printf("Address resolution list cleared successfully \n");
+    }
+    else
+    {
+        printf("Failed to clear address resolution list \n");
+    }
 #endif
+
     /* Start Undirected LE Advertisements on device startup.
      * The corresponding parameters are contained in 'app_bt_cfg.c' */
     result = wiced_bt_start_advertisements(BTM_BLE_ADVERT_UNDIRECTED_HIGH,

@@ -115,7 +115,6 @@ cy_rslt_t app_bt_update_cccd(uint16_t cccd, uint8_t index);
 cy_rslt_t app_bt_restore_cccd(void);
 uint8_t app_bt_find_device_in_flash(uint8_t *bd_addr);
 void app_bt_add_devices_to_address_resolution_db(void);
-void app_bt_remove_devices_from_address_resolution_db(void);
 void print_bond_data(void);
 
 
