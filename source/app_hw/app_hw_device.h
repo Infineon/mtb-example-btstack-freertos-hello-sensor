@@ -49,6 +49,7 @@
 #include "app_bt_event_handler.h"
 #include "wiced_bt_gatt.h"
 
+extern bool pairing_mode;
 /*******************************************************************************
  * Function Prototypes
  *******************************************************************************/

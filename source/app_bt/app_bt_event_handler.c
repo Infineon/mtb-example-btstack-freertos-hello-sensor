@@ -69,10 +69,6 @@
 /* Holds the global state of the hello sensor application */
 hello_sensor_state_t hello_sensor_state;
 
-/* App timer objects */
-/* hello_sensor_s_timer is a periodic timer that ticks every second. This
- * timer is used to for application prints */
-TimerHandle_t hello_sensor_s_timer;
 
 /* This is the index for the link keys, cccd and privacy mode of the host we are 
  * currently bonded to */
@@ -197,8 +193,8 @@ app_bt_management_callback(wiced_bt_management_evt_t event, wiced_bt_management_
             /* Assume the device won't be found.
              * If it is, we will set this back to WICED_BT_SUCCESS */
             result = WICED_BT_ERROR;
-
-            if(BOND_INDEX_MAX != app_bt_find_device_in_flash(p_event_data->paired_device_link_keys_request.bd_addr))
+            bondindex = app_bt_find_device_in_flash(p_event_data->paired_device_link_keys_request.bd_addr);
+            if(BOND_INDEX_MAX > bondindex)
             {
                 /* Copy the keys to where the stack wants it */
                 memcpy(&(p_event_data->paired_device_link_keys_request),
@@ -251,7 +247,7 @@ app_bt_management_callback(wiced_bt_management_evt_t event, wiced_bt_management_
                 app_bt_restore_bond_data();
                 app_bt_restore_cccd();
                 /* Set CCCD value from the value that was previously saved in the NVRAM */
-                app_hello_sensor_notify_char_desc[0] = peer_cccd_data[bondindex];
+                app_hello_sensor_notify_client_char_config[0] = peer_cccd_data[bondindex];
                 printf("Bond info present in Flash for device: ");
                 print_bd_address(p_event_data->encryption_status.bd_addr);
             }
@@ -368,19 +364,6 @@ void app_bt_application_init(void)
     printf("GATT database initialization status: %s \n",
            get_bt_gatt_status_name(gatt_status));
 
-#ifdef PSOC6_BLE
-
-    result = wiced_bt_ble_address_resolution_list_clear_and_disable();
-    if(WICED_BT_SUCCESS == result)
-    {
-        printf("Address resolution list cleared successfully \n");
-    }
-    else
-    {
-        printf("Failed to clear address resolution list \n");
-    }
-#endif
-
     /* Start Undirected LE Advertisements on device startup.
      * The corresponding parameters are contained in 'app_bt_cfg.c' */
     result = wiced_bt_start_advertisements(BTM_BLE_ADVERT_UNDIRECTED_HIGH,
@@ -410,7 +393,7 @@ void app_bt_adv_stop_handler(void)
 {
     wiced_result_t result;
 
-    if (!hello_sensor_state.conn_id)
+    if ((!hello_sensor_state.conn_id) && (!pairing_mode))
     {
         result =  wiced_bt_start_advertisements(BTM_BLE_ADVERT_UNDIRECTED_HIGH,
                                                 0,

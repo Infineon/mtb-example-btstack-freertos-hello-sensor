@@ -465,7 +465,11 @@ app_bt_gatt_connection_up( wiced_bt_gatt_connection_status_t *p_status )
            sizeof(wiced_bt_device_address_t));
 #ifdef PSOC6_BLE
     /* Refer to Note 2 in Document History section of Readme.md */
-    app_bt_add_devices_to_address_resolution_db();
+    if(pairing_mode == TRUE)
+    {
+        app_bt_add_devices_to_address_resolution_db();
+        pairing_mode = FALSE;
+    }
 #endif
     /* Update the adv/conn state */
     return WICED_BT_GATT_SUCCESS;
@@ -497,19 +501,6 @@ app_bt_gatt_connection_down(wiced_bt_gatt_connection_status_t *p_status)
     /* Resetting the device info */
     memset(hello_sensor_state.remote_addr, 0, BD_ADDR_LEN);
     hello_sensor_state.conn_id = 0;
-
-#ifdef PSOC6_BLE
-
-    result = wiced_bt_ble_address_resolution_list_clear_and_disable();
-    if(WICED_BT_SUCCESS == result)
-    {
-        printf("Address resolution list cleared successfully \n");
-    }
-    else
-    {
-        printf("Failed to clear address resolution list \n");
-    }
-#endif
 
     /* Start advertisements after disconnection */
     result = wiced_bt_start_advertisements(BTM_BLE_ADVERT_UNDIRECTED_HIGH,
@@ -591,20 +582,16 @@ wiced_bt_gatt_status_t app_bt_set_value(uint16_t attr_handle,
                 memcpy(app_gatt_db_ext_attr_tbl[i].p_data, p_val, len);
                 gatt_status = WICED_BT_GATT_SUCCESS;
 
-                /* Add code for any action required when this attribute
-                 * is written. In this case, we update the IAS led based on
-                 * the IAS alert level characteristic value */
-
                 switch (attr_handle)
                 {
                /* By writing into Characteristic Client Configuration descriptor
                 *  peer can enable or disable notification or indication */
-                case HDLD_HELLO_SENSOR_NOTIFY_CHAR_DESC:
+                case HDLD_HELLO_SENSOR_NOTIFY_CLIENT_CHAR_CONFIG:
                     if (len != 2)
                     {
                         return WICED_BT_GATT_INVALID_ATTR_LEN;
                     }
-                    app_hello_sensor_notify_char_desc[0] = p_attr[0];
+                    app_hello_sensor_notify_client_char_config[0] = p_attr[0];
                     peer_cccd_data[bondindex] = p_attr[0] | (p_attr[1] << 8);
                     rslt = app_bt_update_cccd(peer_cccd_data[bondindex], bondindex);
                     if (CY_RSLT_SUCCESS != rslt)
@@ -633,9 +620,12 @@ wiced_bt_gatt_status_t app_bt_set_value(uint16_t attr_handle,
                     }
                     break;
 
+                case HDLD_GATT_SERVICE_CHANGED_CLIENT_CHAR_CONFIG:
+                    gatt_status = WICED_BT_GATT_SUCCESS;
+                    break;
+                    
                 default:
                     gatt_status = WICED_BT_GATT_INVALID_HANDLE;
-
                     break;
                 }
             }
@@ -683,14 +673,14 @@ wiced_bt_gatt_status_t app_bt_set_value(uint16_t attr_handle,
 void app_bt_send_message(void)
 {
     wiced_bt_gatt_status_t status;
-    printf("hello_sensor_send_message: CCCD:%d\n", app_hello_sensor_notify_char_desc[0]);
+    printf("hello_sensor_send_message: CCCD:%d\n", app_hello_sensor_notify_client_char_config[0]);
 
     /* If client has not registered for indication or notification, no action */
-    if(0 == app_hello_sensor_notify_char_desc[0])
+    if(0 == app_hello_sensor_notify_client_char_config[0])
     {
         return;
     }
-    else if(app_hello_sensor_notify_char_desc[0] & GATT_CLIENT_CONFIG_NOTIFICATION)
+    else if(app_hello_sensor_notify_client_char_config[0] & GATT_CLIENT_CONFIG_NOTIFICATION)
     {
         status = wiced_bt_gatt_server_send_notification(hello_sensor_state.conn_id,
                                                         HDLC_HELLO_SENSOR_NOTIFY_VALUE,
@@ -756,7 +746,7 @@ void* app_bt_alloc_buffer(int len)
  */
 void app_bt_gatt_increment_notify_value(void)
 {
-    if(0 == app_hello_sensor_notify_char_desc[0])
+    if(0 == app_hello_sensor_notify_client_char_config[0])
     {
         return;
     }

@@ -48,6 +48,7 @@
 #include "inttypes.h"
 #include <FreeRTOS.h>
 #include <task.h>
+#include "timers.h"
 #include "app_bt_bonding.h"
 #include "app_flash_common.h"
 #include "cycfg_gap.h"
@@ -62,15 +63,15 @@
 /*******************************************************************************
  * Macro Definitions
  ******************************************************************************/
-#define APP_BTN_PRESS_SHORT            (50)
-#define APP_BTN_PRESS_LONG             (10000)
-#define APP_TIMEOUT_TEN_SEC_FACTOR     APP_BTN_PRESS_LONG
-#define APP_TIMEOUT_ONE_SEC_FACTOR     (1000u)
-#define APP_TIMEOUT_MS                 (1)
+#define APP_BTN_PRESS_SHORT_MIN        (50)
+#define APP_BTN_PRESS_SHORT_MAX        (250)
+#define APP_BTN_PRESS_5S               (5000)
+#define APP_BTN_PRESS_10S              (10000)
+#define APP_TIMEOUT_MS_BTN             (1)
 #define APP_TIMEOUT_LED_INDICATE       (500)
 #define APP_TIMEOUT_LED_BLINK          (250)
 
-#define MAXIMUM_LED_BLINK_COUNT        (20)
+#define MAXIMUM_LED_BLINK_COUNT        (11)
 
 /* Interrupt priority for GPIO connected to button */
 #define GPIO_INTERRUPT_PRIORITY         (4)
@@ -79,6 +80,9 @@
 /* Task Priority of Hello Sensor BTN Task */
 #define BTN_TASK_PRIORITY               (2)
 
+#ifndef CYBSP_USER_LED2
+#define CYBSP_USER_LED2                 CYBSP_USER_LED
+#endif
 /*******************************************************************************
  * Variable Definitions
  ******************************************************************************/
@@ -90,9 +94,9 @@ TimerHandle_t timer_led_blink;
 /* This timer is used to toggle LED to indicate the 10 sec button press duration */
 TimerHandle_t ms_timer_led_indicate;
 
-/* ms_timer is a periodic timer that ticks every millisecond.
+/* ms_timer_btn is a periodic timer that ticks every millisecond.
  * This timer is used to measure the duration of button press events */
-TimerHandle_t ms_timer;
+TimerHandle_t ms_timer_btn;
 
 /* Variables to hold the timer count values */
 uint8_t led_blink_count;
@@ -100,8 +104,17 @@ uint8_t led_blink_count;
 /* Handle of the button task */
 TaskHandle_t button_handle;
 
-/* Variable used to determine if indication should start or stop */
-static uint8_t led_indicate_state;
+/* Variable to keep track of LED blink count for long button press */
+static uint8_t led_indicate_count;
+
+/* Variable used to determine if button is pressed or not */
+static bool is_btn_pressed;
+
+/* To check if the device has entered pairing mode to connect and bond with a new device */
+bool pairing_mode = FALSE;
+
+/* The time stamp at which button is pressed */
+static uint32_t btn_press_start;
 
 /* For button press interrupt */
 cyhal_gpio_callback_data_t btn_cb_data =
@@ -132,7 +145,7 @@ void app_bt_led_blink(uint8_t num_of_blinks)
 }
 
 /**
- * Function Name: app_bt_timeout_ms
+ * Function Name: app_bt_timeout_ms_btn
  *
  * Function Description:
  *   @brief The function invoked on timeout of FreeRTOS millisecond timer. It is
@@ -144,15 +157,16 @@ void app_bt_led_blink(uint8_t num_of_blinks)
  *   @return None
  *
  */
-void app_bt_timeout_ms(TimerHandle_t timer_handle)
+void app_bt_timeout_ms_btn(TimerHandle_t timer_handle)
 {
     hello_sensor_state.timer_count_ms++;
-    /* print for every 10 seconds */
-    if (0 == (hello_sensor_state.timer_count_ms % APP_TIMEOUT_TEN_SEC_FACTOR))
+    if(APP_BTN_PRESS_5S == (hello_sensor_state.timer_count_ms - btn_press_start) && (is_btn_pressed))
     {
-        printf("hello_sensor_timeout in second: %lu\n",
-               (unsigned long)hello_sensor_state.timer_count_ms/APP_TIMEOUT_ONE_SEC_FACTOR);
+        /* Start LED blink indicate for 5 more seconds */
+        cyhal_gpio_write(CYBSP_USER_LED2 , CYBSP_LED_STATE_ON);
+        xTimerStart(ms_timer_led_indicate, 0);
     }
+
 }
 
 /**
@@ -171,19 +185,14 @@ void app_bt_timeout_ms(TimerHandle_t timer_handle)
  */
 void app_bt_timeout_led_indicate(TimerHandle_t timer_handle)
 {
-    static uint8_t led_indicate_count;
-
     led_indicate_count++;
-    if(TRUE == led_indicate_state)
-    {
-        cyhal_gpio_toggle(CYBSP_USER_LED2);
-    }
+    cyhal_gpio_toggle(CYBSP_USER_LED2);
+
     if(led_indicate_count == MAXIMUM_LED_BLINK_COUNT)
     {
         xTimerStop(ms_timer_led_indicate, 0);
         cyhal_gpio_write(CYBSP_USER_LED2 , CYBSP_LED_STATE_OFF);
         led_indicate_count = 0;
-        led_indicate_state = 0;
     }
 }
 
@@ -265,12 +274,16 @@ void app_bt_interrupt_config(void)
  */
 void app_bt_gpio_interrupt_handler(void *handler_arg, cyhal_gpio_event_t event)
 {
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    if((CYHAL_GPIO_IRQ_RISE == event) || (CYHAL_GPIO_IRQ_FALL == event))
-    {
-        vTaskNotifyGiveFromISR(button_handle, &xHigherPriorityTaskWoken);
-        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-    }
+     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+     if(CYHAL_GPIO_IRQ_FALL == event)
+     {
+         xTimerStartFromISR(ms_timer_btn, &xHigherPriorityTaskWoken);
+     }
+     if((CYHAL_GPIO_IRQ_RISE == event) || (CYHAL_GPIO_IRQ_FALL == event))
+     {
+          vTaskNotifyGiveFromISR(button_handle, &xHigherPriorityTaskWoken);
+          portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+     }
 }
 
 /**
@@ -294,12 +307,12 @@ void app_bt_hw_init()
 
     /* Starting a log print timer for button press duration
      * and application traces  */
-    ms_timer = xTimerCreate("ms_timer",
-                            pdMS_TO_TICKS(APP_TIMEOUT_MS),
+    ms_timer_btn = xTimerCreate("ms_timer",
+                            pdMS_TO_TICKS(APP_TIMEOUT_MS_BTN),
                             pdTRUE,
                             NULL,
-                            app_bt_timeout_ms);
-    xTimerStart(ms_timer, APP_TIMEOUT_MS);
+                            app_bt_timeout_ms_btn);
+    xTimerStart(ms_timer_btn, 0);
 
     /* Starting a 1ms timer for indication LED used to show button press duration */
     ms_timer_led_indicate = xTimerCreate("ms_timer_led_indicate",
@@ -336,37 +349,36 @@ void app_bt_hw_init()
  */
 void button_task(void *arg)
 {
-    static uint32_t btn_press_duration = 0;
-    static uint32_t btn_press_start = 0;
+    static uint32_t btn_press_duration;
     cy_rslt_t rslt = CY_RSLT_SUCCESS;
+    wiced_result_t result;
 
     for (;;)
     {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
         if(CYBSP_BTN_PRESSED == cyhal_gpio_read(CYBSP_USER_BTN))
         {
-            led_indicate_state = TRUE;
+            is_btn_pressed = TRUE;
             btn_press_start = hello_sensor_state.timer_count_ms;
             cyhal_gpio_write(CYBSP_USER_LED2 , CYBSP_LED_STATE_ON);
-            xTimerStart(ms_timer_led_indicate, 0);
         }
         else if(0 != btn_press_start)
         {
-            /* Don't toggle the LED for 10 seconds as this is a short button press */
-            led_indicate_state = FALSE;
-
-            printf("Button pressed\n");
+            is_btn_pressed = FALSE;
             cyhal_gpio_write(CYBSP_USER_LED2 , CYBSP_LED_STATE_OFF);
             btn_press_duration = hello_sensor_state.timer_count_ms - btn_press_start;
-            if((btn_press_duration > APP_BTN_PRESS_SHORT) &&
-               (btn_press_duration <= APP_BTN_PRESS_LONG))
+
+            /* Check if button press is short */
+            if((btn_press_duration > APP_BTN_PRESS_SHORT_MIN) &&
+               (btn_press_duration <= APP_BTN_PRESS_SHORT_MAX))
             {
+                printf("Short button press is detected \n");
+                /* Turn off the LED since it is a short button press */
+                cyhal_gpio_write(CYBSP_USER_LED2 , CYBSP_LED_STATE_OFF);
                 /* If connection is down, start high duty advertisements,
                  * so client can connect */
                 if (0 == hello_sensor_state.conn_id)
                 {
-                    wiced_result_t result;
-
                     printf("Starting Undirected High Advertisement\n");
                     result = wiced_bt_start_advertisements(BTM_BLE_ADVERT_UNDIRECTED_HIGH,
                                                            0,
@@ -401,7 +413,45 @@ void button_task(void *arg)
                     }
                 }
             }
-            else if(btn_press_duration > APP_BTN_PRESS_LONG)
+            /* Check if button is pressed for 5 seconds and enter pairing mode wherein the device can connect
+               and bond to a new peer device */
+            else if((btn_press_duration > APP_BTN_PRESS_5S) && (btn_press_duration < APP_BTN_PRESS_10S))
+            {
+                printf("Entering Pairing Mode: Connect, Pair and Bond with a new peer device...\n");
+#ifdef PSOC6_BLE
+                pairing_mode = TRUE;
+                result = wiced_bt_start_advertisements(BTM_BLE_ADVERT_OFF,
+                                                       0,
+                                                       NULL);
+                result = wiced_bt_ble_address_resolution_list_clear_and_disable();
+                if(WICED_BT_SUCCESS == result)
+                {
+                    printf("Address resolution list cleared successfully \n");
+                }
+                else
+                {
+                    printf("Failed to clear address resolution list \n");
+                }
+#endif
+                printf("Starting Undirected High Advertisement\n");
+                result = wiced_bt_start_advertisements(BTM_BLE_ADVERT_UNDIRECTED_HIGH,
+                                                        0,
+                                                        NULL);
+                if (result != WICED_BT_SUCCESS)
+                    printf("Start advertisement failed: %d\n", result);
+
+                UNUSED_VARIABLE(result);
+
+                /* Stop the LED indication if user presses the button for more than 5 seconds
+                   but releases before 10 seconds */
+                xTimerStop(ms_timer_led_indicate, 0);
+                /* Reset the number of blinks to 0 */
+                led_indicate_count = 0;
+                /* Turn off the LED */
+                cyhal_gpio_write(CYBSP_USER_LED2 , CYBSP_LED_STATE_OFF);
+            }
+            /* Check of button is press for 10 seconds and delete the bond info from NVRAM */
+            else if(btn_press_duration > APP_BTN_PRESS_10S)
             {
                 printf("Button pressed more than 10 seconds,"
                        "attempting to clear bond info\n");
@@ -428,6 +478,8 @@ void button_task(void *arg)
                            "Can't reset bonding information\n");
                 }
             }
+            /* Stop the ms_timer_btn, start it again when button interrupt is detected */
+            xTimerStop(ms_timer_btn, 0);
         }
     }
 }

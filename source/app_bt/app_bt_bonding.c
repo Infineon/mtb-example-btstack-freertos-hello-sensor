@@ -67,11 +67,6 @@ bond_info_t    bond_info;
 wiced_bt_local_identity_keys_t identity_keys;
 uint16_t       peer_cccd_data[BOND_INDEX_MAX];
 
-
-#ifdef PSOC6_BLE
-typedef unsigned int BOOL32;
-extern BOOL32 btsnd_hcic_ble_set_addr_resolution_enable(uint8_t addr_resolution_enable);
-#endif
 /*******************************************************************************
  *                              FUNCTION DEFINITIONS
  ******************************************************************************/
@@ -332,7 +327,7 @@ cy_rslt_t app_bt_read_local_identity_keys(void)
     cy_rslt_t rslt = mtb_kvstore_read(&kvstore_obj, "local_irk", NULL, &data_size);
     if (rslt != CY_RSLT_SUCCESS)
     {
-        printf("Error Reading Keys! New Keys need to be generated! \n");
+        printf("New Keys need to be generated! \n");
     }
     else
     {
