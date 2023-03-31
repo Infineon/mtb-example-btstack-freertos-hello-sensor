@@ -7,7 +7,7 @@
 #
 ################################################################################
 # \copyright
-# Copyright 2018-2022, Cypress Semiconductor Corporation (an Infineon company)
+# Copyright 2018-2023, Cypress Semiconductor Corporation (an Infineon company)
 # SPDX-License-Identifier: Apache-2.0
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -81,7 +81,7 @@ ENABLE_SPY_TRACES = 0
 USE_INTERNAL_FLASH = 1
 endif
 
-ifeq ($(TARGET), $(filter $(TARGET), APP_CY8CKIT-062-WIFI-BT APP_CYW9P62S1-43438EVB-01 APP_CYW9P62S1-43012EVB-01 APP_CY8CKIT-062S2-43012 APP_CY8CPROTO-062S3-4343W APP_CY8CEVAL-062S2-LAI-4373M2 APP_CY8CPROTO-062-4343W))
+ifeq ($(TARGET), $(filter $(TARGET), APP_CY8CKIT-062-WIFI-BT APP_CYW9P62S1-43438EVB-01 APP_CYW9P62S1-43012EVB-01 APP_CY8CKIT-062S2-43012 APP_CY8CPROTO-062S3-4343W APP_CY8CEVAL-062S2-LAI-4373M2 APP_CY8CPROTO-062-4343W APP_CY8CEVAL-062S2-LAI-43439M2 APP_CY8CPROTO-062S2-43439))
 USE_INTERNAL_FLASH = 1
 endif
 
