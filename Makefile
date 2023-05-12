@@ -41,7 +41,7 @@ MTB_TYPE=COMBINED
 # To change the target, it is recommended to use the Library manager
 # ('make library-manager' from command line), which will also update Eclipse IDE launch
 # configurations.
-TARGET=CYW920829M2EVB-01
+TARGET=CYW920829M2EVK-02
 
 # Name of application (used to derive name of final linked file).
 APPNAME=mtb-example-btstack-freertos-hello-sensor
@@ -69,7 +69,7 @@ CONFIG=Debug
 VERBOSE=
 
 # Optionally enable app and Bluetooth protocol traces and route to BTSpy
-# Not applicable for CYW920829M2EVB-01
+# Not applicable for CYW920829M2EVK-02
 ENABLE_SPY_TRACES = 0
 # Specify the flash region to be used as NVRAM for bond data storage
 USE_INTERNAL_FLASH = 0

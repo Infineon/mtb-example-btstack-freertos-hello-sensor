@@ -4,7 +4,7 @@ This code example demonstrates the implementation of a Bluetooth&reg; LE custom 
 
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-btstack-freertos-hello-sensor)
 
-[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzUxNTAiLCJTcGVjIE51bWJlciI6IjAwMi0zNTE1MCIsIkRvYyBUaXRsZSI6IkJUU1RBQ0s6IEJsdWV0b290aCZyZWc7IExFIGhlbGxvIHNlbnNvciIsInJpZCI6Im5oZWciLCJEb2MgdmVyc2lvbiI6IjMuMi4wIiwiRG9jIExhbmd1YWdlIjoiRW5nbGlzaCIsIkRvYyBEaXZpc2lvbiI6Ik1DRCIsIkRvYyBCVSI6IklDVyIsIkRvYyBGYW1pbHkiOiJCVEFCTEUifQ==)
+[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzUxNTAiLCJTcGVjIE51bWJlciI6IjAwMi0zNTE1MCIsIkRvYyBUaXRsZSI6IkJUU1RBQ0s6IEJsdWV0b290aCZyZWc7IExFIGhlbGxvIHNlbnNvciIsInJpZCI6Im5oZWciLCJEb2MgdmVyc2lvbiI6IjMuMy4wIiwiRG9jIExhbmd1YWdlIjoiRW5nbGlzaCIsIkRvYyBEaXZpc2lvbiI6Ik1DRCIsIkRvYyBCVSI6IklDVyIsIkRvYyBGYW1pbHkiOiJCVEFCTEUifQ==)
 
 ## Requirements
 
@@ -13,7 +13,7 @@ This code example demonstrates the implementation of a Bluetooth&reg; LE custom 
    - CY8CKIT-062-BLE : v4.0.0
    - CY8CPROTO-063-BLE : v4.0.0
    - CYBLE-416045-EVAL : v4.0.0
-   - CYW920829M2EVB-01 : release v1.0.0 beta
+   - CYW920829M2EVK-02 : release v1.0.0 Beta4
 - Programming language: C
 - Associated parts: [AIROC&trade; CYW20829 Bluetooth&reg; LE SoC](https://www.infineon.com/cms/en/product/promopages/airoc20829), [PSoC&trade; 6 MCU with AIROC&trade; Bluetooth&reg; LE](https://www.infineon.com/cms/en/product/microcontroller/32-bit-psoc-arm-cortex-microcontroller/psoc-6-32-bit-arm-cortex-m4-mcu/psoc-63/)
 
@@ -25,7 +25,7 @@ This code example demonstrates the implementation of a Bluetooth&reg; LE custom 
 
 ## Supported kits (make variable 'TARGET')
 
-- [AIROC&trade; CYW20829 Bluetooth&reg; LE SoC](https://www.infineon.com/cms/en/product/promopages/airoc20829) (`CYW920829M2EVB-01`)  – Default value of `TARGET`
+- AIROC&trade; CYW20829 Bluetooth&reg; LE evaluation kit (`CYW920829M2EVK-02`)  – Default value of `TARGET`
 - [PSoC&trade; 6 Wi-Fi Bluetooth&reg; prototyping kit](https://www.infineon.com/CY8CPROTO-062-4343W) (`CY8CPROTO-062-4343W`)
 - [PSoC&trade; 6 Wi-Fi Bluetooth&reg; pioneer kit](https://www.infineon.com/CY8CKIT-062-WIFI-BT) (`CY8CKIT-062-WIFI-BT`)
 - [PSoC&trade; 62S2 Wi-Fi Bluetooth&reg; pioneer kit](https://www.infineon.com/CY8CKIT-062S2-43012) (`CY8CKIT-062S2-43012`)
@@ -44,13 +44,13 @@ This example uses the board's default configuration. See the kit user guide to e
 
 **Note:** The PSoC&trade; 6 Bluetooth&reg; LE pioneer kit (CY8CKIT-062-BLE) and PSoC&trade; 6 Wi-Fi Bluetooth&reg; pioneer kit (CY8CKIT-062-WIFI-BT) ship with KitProg2 installed. The ModusToolbox&trade; software requires KitProg3. Before using this code example, make sure that the board is upgraded to KitProg3. The tool and instructions are available in the [Firmware Loader](https://github.com/Infineon/Firmware-loader) GitHub repository. If you do not upgrade, you will see an error like "unable to find CMSIS-DAP device" or "KitProg firmware is out of date".
 
-The AIROC&trade; CYW20829 Bluetooth&reg; kit (CYW920829M2EVB-01) ships with KitProg3 version 2.30 installed. The ModusToolbox&trade; software requires KitProg3 with latest version 2.40. Before using this code example, make sure that the board is upgraded to KitProg3. The tool and instructions are available in the Firmware Loader GitHub repository. If you do not upgrade, you will see an error such as "unable to find CMSIS-DAP device" or "KitProg firmware is out of date".
+The AIROC&trade; CYW20829 Bluetooth&reg; kit (CYW920829M2EVK-02) ships with KitProg3 version 2.21 installed. The ModusToolbox&trade; software requires KitProg3 with latest version 2.40. Before using this code example, make sure that the board is upgraded to KitProg3. The tool and instructions are available in the Firmware Loader GitHub repository. If you do not upgrade, you will see an error such as "unable to find CMSIS-DAP device" or "KitProg firmware is out of date".
 
 ## Software setup
 
-Download and install the LightBlue&reg; app for [iOS](https://apps.apple.com/us/app/lightblue/id557428110) or [Android](https://play.google.com/store/apps/details?id=com.punchthrough.lightblueexplorer&gl=US).
+Download and install the AIROC&trade; Bluetooth&reg; Connect App for [iOS](https://apps.apple.com/in/app/airoc-bluetooth-connect-app/id6443702288) or [Android](https://play.google.com/store/apps/details?id=com.infineon.airocbluetoothconnect).
 
-Scan the following QR codes from your mobile phone to download the LightBlue app.
+Scan the following QR codes from your mobile phone to download the AIROC&trade; Bluetooth&reg; Connect App.
 
 ![](./images/qr.png)
 
@@ -106,7 +106,7 @@ Argument | Description | Required/optional
 The following example clones the "[Bluetooth&reg; LE Hello Sensor](https://github.com/Infineon/mtb-example-btstack-freertos-hello-sensor)" application with the desired name "HelloSensor" configured for the *CY8CKIT-062-WIFI-BT* BSP into the specified working directory, *C:/mtb_projects*:
 
    ```
-   project-creator-cli --board-id CYW920829M2EVB-01 --app-id mtb-example-btstack-freertos-hello-sensor --user-app-name HelloSensor --target-dir "C:/mtb_projects"
+   project-creator-cli --board-id CYW920829M2EVK-02 --app-id mtb-example-btstack-freertos-hello-sensor --user-app-name HelloSensor --target-dir "C:/mtb_projects"
    ```
 
 **Note:** The project-creator-cli tool uses the `git clone` and `make getlibs` commands to fetch the repository and import the required libraries. For details, see the "Project creator tools" section of the [ModusToolbox&trade; software user guide](https://www.infineon.com/ModusToolboxUserGuide) (locally available at *{ModusToolbox&trade; software install directory}/docs_{version}/mtb_user_guide.pdf*).
@@ -188,23 +188,23 @@ For a list of supported IDEs and more details, see the "Exporting to IDEs" secti
 
       Example:
       ```
-      make program TARGET=CYW920829M2EVB-01 TOOLCHAIN=GCC_ARM
+      make program TARGET=CYW920829M2EVK-02 TOOLCHAIN=GCC_ARM
       ```
    </details>
 
-4. After programming, the application starts automatically. Observe the messages on the UART terminal, and wait for the device to connect with the peer client (for example, the LightBlue app). Use the KitProg3 COM port to view the Bluetooth&reg; stack and application trace messages in the terminal window:
+4. After programming, the application starts automatically. Observe the messages on the UART terminal, and wait for the device to connect with the peer client (for example, the AIROC&trade; Bluetooth&reg; Connect App). Use the KitProg3 COM port to view the Bluetooth&reg; stack and application trace messages in the terminal window:
 
    **Figure 1. Log messages on KitProg3 COM port**
 
    ![](images/serial-log-when-connect-device.png)
 
-5. To test using the LightBlue mobile app, do the following (see the equivalent LightBlue app screenshots in Figure 2 and Figure 3):
+5. To test using the AIROC&trade; Bluetooth&reg; Connect App, do the following (see the equivalent AIROC&trade; Bluetooth&reg; Connect App screenshots in Figure 2 and Figure 3):
 
    1. Turn ON Bluetooth&reg; on your Android or iOS device.
 
-   2. Launch the LightBlue app.
+   2. Launch the AIROC&trade; Bluetooth&reg; Connect App.
 
-   3. Swipe down on the LightBlue app home screen to start scanning for Bluetooth&reg; LE peripherals; your device (“Hello") appears on the LightBlue app home screen. Select your device to establish a Bluetooth&reg; LE connection.
+   3. Swipe down on the AIROC&trade; Bluetooth&reg; Connect App home screen to start scanning for Bluetooth&reg; LE peripherals; your device (“Hello") appears on the AIROC&trade; Bluetooth&reg; Connect App home screen. Select your device to establish a Bluetooth&reg; LE connection.
 
    4. In the Services page, choose the first characteristic to enable notifications/indications. Register for notifications or indications. This will, in turn, initiate the pairing process.
 
@@ -214,9 +214,9 @@ For a list of supported IDEs and more details, see the "Exporting to IDEs" secti
 
       ![](./images/read-indicate.png)
 
-      **Figure 3. Testing with the LightBlue app on Android**
+      **Figure 3. Testing with the AIROC&trade; Bluetooth&reg; Connect App on Android**
 
-      ![](./images/lightblue.png)
+      ![](./images/airoc.png)
 
    6. You can choose the second characteristic, write a numeric value into it, and observe that the user LED on the board will blink as many times as the number written in the 'Blink' characteristic.
 
@@ -234,7 +234,7 @@ For a list of supported IDEs and more details, see the "Exporting to IDEs" secti
 
 ## Steps to enable BTSpy logs
 
-**Note:** This feature is available only for CYW920829M2EVB-01.
+**Note:** This feature is available only for CYW920829M2EVK-02.
 
 1. Navigate to the application Makefile and open it. Find the Makefile variable `ENABLE_SPY_TRACES` and set it to the value *1* as shown:
     ```
@@ -343,6 +343,7 @@ Document title: *CE235150* – *Bluetooth&reg; LE hello sensor*
  3.0.0   | Updated to support ModusToolbox&trade; software v3.0 and BSPs v4.X
  3.1.0   | Introduction of pairing-mode, new button press mode to enter pairing-mode
  3.2.0   | Added support for CY8CEVAL-062S2-LAI-43439M2,CY8CPROTO-062S2-43439
+ 3.3.0   | Removed CYW920829M2EVB-01 from supported kits <br> Added support for CYW920829M2EVK-02 
 
 **Notes:**
 
