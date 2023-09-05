@@ -4,7 +4,7 @@ This code example demonstrates the implementation of a Bluetooth&reg; LE custom 
 
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-btstack-freertos-hello-sensor)
 
-[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzUxNTAiLCJTcGVjIE51bWJlciI6IjAwMi0zNTE1MCIsIkRvYyBUaXRsZSI6IkJUU1RBQ0s6IEJsdWV0b290aCZyZWc7IExFIGhlbGxvIHNlbnNvciIsInJpZCI6Im5oZWciLCJEb2MgdmVyc2lvbiI6IjMuNC4wIiwiRG9jIExhbmd1YWdlIjoiRW5nbGlzaCIsIkRvYyBEaXZpc2lvbiI6Ik1DRCIsIkRvYyBCVSI6IklDVyIsIkRvYyBGYW1pbHkiOiJCVEFCTEUifQ==)
+[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzUxNTAiLCJTcGVjIE51bWJlciI6IjAwMi0zNTE1MCIsIkRvYyBUaXRsZSI6IkJUU1RBQ0s6IEJsdWV0b290aCZyZWc7IExFIGhlbGxvIHNlbnNvciIsInJpZCI6Im5oZWciLCJEb2MgdmVyc2lvbiI6IjMuNS4wIiwiRG9jIExhbmd1YWdlIjoiRW5nbGlzaCIsIkRvYyBEaXZpc2lvbiI6Ik1DRCIsIkRvYyBCVSI6IklDVyIsIkRvYyBGYW1pbHkiOiJCVEFCTEUifQ==)
 
 ## Requirements
 
@@ -13,7 +13,7 @@ This code example demonstrates the implementation of a Bluetooth&reg; LE custom 
    - CY8CKIT-062-BLE : v4.0.0
    - CY8CPROTO-063-BLE : v4.0.0
    - CYBLE-416045-EVAL : v4.0.0
-   - CYW920829M2EVK-02 : release v1.0.0 Beta4
+   - CYW920829M2EVK-02 : v1.0.1
 - Programming language: C
 - Associated parts: [AIROC&trade; CYW20829 Bluetooth&reg; LE SoC](https://www.infineon.com/cms/en/product/promopages/airoc20829), [PSoC&trade; 6 MCU with AIROC&trade; Bluetooth&reg; LE](https://www.infineon.com/cms/en/product/microcontroller/32-bit-psoc-arm-cortex-microcontroller/psoc-6-32-bit-arm-cortex-m4-mcu/psoc-63/)
 
@@ -218,14 +218,13 @@ For a list of supported IDEs and more details, see the "Exporting to IDEs" secti
 
       ![](./images/airoc.png)
 
-   6. You can choose the second characteristic, write a numeric value into it, and observe that the user LED on the board will blink as many times as the number written in the 'Blink' characteristic.
-
+   6. You can choose the second characteristic, write a numeric value into it, and observe that the user LED on the board will blink as many times as the number written in the 'Blink' characteristic.Note that the numeric value written should range from 0-9 only. 
       **Figure 4. Log messages on KitProg3 COM port**
 
       ![](./images/read-write-operation.png)
 
 
-6. To forget a bonded device, press and hold the user button for more than 10 seconds and then release it. Ensure that the device is not in a connected state before performing this. User LED on the kit blinks for 10 seconds to indicate the duration of button press.
+6. To forget a bonded device, press and hold the user button for more than 10 seconds and then release it. Ensure that the device is not in a connected state before performing this. User LED on the kit will be constantly turned ON for first 5 seconds and it will start blinking for 5 more seconds to indicate that the device is entering new mode.
 
    **Figure 5. Log messages on KitProg3 COM port**
 
@@ -274,7 +273,7 @@ The user button on the board is configured to trigger an interrupt on the fallin
 
 2. *Button press for 5 seconds:* Press and hold the button for 5 seconds to enter pairing mode. In pairing mode, you can connect to a new peer device. An onboard LED turns ON for 5 seconds to indicate when to release the button to enter this mode.
 
-3. *Button press for 10 seconds:* Press and hold the button for 10 seconds to erase the bonding information from the flash memory of the device. The onboard LED starts blinking for 5 more seconds to indicate when to release the button to enter this mode.
+3. *Button press for 10 seconds:* Press and hold the button for 10 seconds to erase the bonding information from the flash memory of the device. The onboard LED will be constantly turned ON for first 5 seconds and it will start blinking for 5 more seconds to indicate that the device is entering new mode.
 
 **Note:** The device must be disconnected from the peer client device before erasing the bonding information from the flash memory.
 
@@ -345,6 +344,7 @@ Document title: *CE235150* – *Bluetooth&reg; LE hello sensor*
  3.2.0   | Added support for CY8CEVAL-062S2-LAI-43439M2,CY8CPROTO-062S2-43439
  3.3.0   | Removed CYW920829M2EVB-01 from supported kits <br> Added support for CYW920829M2EVK-02
  3.4.0   | Added support for CY8CEVAL-062S2-MUR-4373EM2 and CY8CEVAL-062S2-MUR-4373M2
+ 3.5.0   | Fix reconnection issue due to duplication of bond data entries(BDA) in NVRAM
 
 **Notes:**
 

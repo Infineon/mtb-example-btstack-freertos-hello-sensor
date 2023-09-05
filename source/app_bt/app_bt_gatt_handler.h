@@ -58,25 +58,15 @@ wiced_bt_gatt_status_t
 app_bt_gatt_callback(wiced_bt_gatt_evt_t event,
                      wiced_bt_gatt_event_data_t *p_data);
 wiced_bt_gatt_status_t
-app_bt_gatt_req_cb(wiced_bt_gatt_attribute_request_t *p_attr_req);
+app_bt_gatt_req_cb(wiced_bt_gatt_attribute_request_t *p_attr_req, uint16_t *p_error_handle);
 wiced_bt_gatt_status_t
 app_bt_gatt_conn_status_cb(wiced_bt_gatt_connection_status_t *p_conn_status);
 wiced_bt_gatt_status_t
-app_bt_gatt_req_read_handler(uint16_t conn_id,
-                             wiced_bt_gatt_opcode_t opcode,
-                             wiced_bt_gatt_read_t *p_read_req,
-                             uint16_t len_req);
+app_bt_gatt_req_read_handler(uint16_t conn_id, wiced_bt_gatt_opcode_t opcode, wiced_bt_gatt_read_t *p_read_req, uint16_t len_req, uint16_t *p_error_handle);
 wiced_bt_gatt_status_t
-app_bt_gatt_req_write_handler(uint16_t conn_id,
-                              wiced_bt_gatt_opcode_t opcode,
-                              wiced_bt_gatt_write_req_t *p_write_req,
-                              uint16_t len_req);
+app_bt_gatt_req_write_handler(uint16_t conn_id, wiced_bt_gatt_opcode_t opcode, wiced_bt_gatt_write_req_t *p_write_req, uint16_t len_req, uint16_t *p_error_handle);
 wiced_bt_gatt_status_t
-app_bt_gatt_req_read_by_type_handler(uint16_t conn_id,
-                                     wiced_bt_gatt_opcode_t opcode,
-                                     wiced_bt_gatt_read_by_type_t *p_read_req,
-                                     uint16_t len_requested);
-
+app_bt_gatt_req_read_by_type_handler(uint16_t conn_id, wiced_bt_gatt_opcode_t opcode, wiced_bt_gatt_read_by_type_t *p_read_req, uint16_t len_requested, uint16_t *p_error_handle);
 wiced_bt_gatt_status_t
 app_bt_gatt_connection_up(wiced_bt_gatt_connection_status_t *p_status);
 wiced_bt_gatt_status_t

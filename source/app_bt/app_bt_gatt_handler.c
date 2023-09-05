@@ -83,7 +83,9 @@ wiced_bt_gatt_status_t
 app_bt_gatt_callback(wiced_bt_gatt_evt_t event,
                             wiced_bt_gatt_event_data_t *p_event_data)
 {
-    wiced_bt_gatt_status_t gatt_status = WICED_BT_GATT_ERROR;
+    wiced_bt_gatt_status_t gatt_status = WICED_BT_SUCCESS;
+
+    uint16_t error_handle = 0;
 
     wiced_bt_gatt_attribute_request_t *p_attr_req = &p_event_data->attribute_request;
     /* Call the appropriate callback function based on the GATT event type,
@@ -95,10 +97,16 @@ app_bt_gatt_callback(wiced_bt_gatt_evt_t event,
             break;
 
         case GATT_ATTRIBUTE_REQUEST_EVT:
-            gatt_status = app_bt_gatt_req_cb(p_attr_req);
-
-            break;
-            /* GATT buffer request, typically sized to max of bearer mtu - 1 */
+            gatt_status = app_bt_gatt_req_cb(p_attr_req, 
+                                             &error_handle);
+            if(gatt_status!=WICED_BT_GATT_SUCCESS)
+            {
+               wiced_bt_gatt_server_send_error_rsp(p_attr_req->conn_id, 
+                                                          p_attr_req->opcode, 
+                                                          error_handle, 
+                                                          gatt_status);         
+            }
+            break; 
         case GATT_GET_RESPONSE_BUFFER_EVT:
             p_event_data->buffer_request.buffer.p_app_rsp_buffer =
             app_bt_alloc_buffer(p_event_data->buffer_request.len_requested);
@@ -123,7 +131,7 @@ app_bt_gatt_callback(wiced_bt_gatt_evt_t event,
 
 
         default:
-            gatt_status = WICED_BT_GATT_SUCCESS;
+            gatt_status = WICED_BT_GATT_ERROR;
                break;
     }
 
@@ -143,29 +151,32 @@ app_bt_gatt_callback(wiced_bt_gatt_evt_t event,
  *
  */
 wiced_bt_gatt_status_t
-app_bt_gatt_req_cb (wiced_bt_gatt_attribute_request_t *p_attr_req)
+app_bt_gatt_req_cb (wiced_bt_gatt_attribute_request_t *p_attr_req, 
+                    uint16_t *p_error_handle)
 {
-    wiced_bt_gatt_status_t gatt_status = WICED_BT_GATT_ERROR;
+    wiced_bt_gatt_status_t gatt_status = WICED_BT_SUCCESS;
     switch ( p_attr_req->opcode )
     {
         case GATT_REQ_READ:
         case GATT_REQ_READ_BLOB:
              /* Attribute read request */
             gatt_status =                                                      \
-            app_bt_gatt_req_read_handler(p_attr_req->conn_id,
-                                                p_attr_req->opcode,
-                                                &p_attr_req->data.read_req,
-                                                p_attr_req->len_requested);
+            app_bt_gatt_req_read_handler(p_attr_req->conn_id, 
+                                                p_attr_req->opcode, 
+                                                &p_attr_req->data.read_req, 
+                                                p_attr_req->len_requested, 
+                                                p_error_handle);
              break;
 
         case GATT_REQ_WRITE:
         case GATT_CMD_WRITE:
              /* Attribute write request */
              gatt_status =
-             app_bt_gatt_req_write_handler(p_attr_req->conn_id,
-                                                 p_attr_req->opcode,
-                                                 &p_attr_req->data.write_req,
-                                                 p_attr_req->len_requested);
+             app_bt_gatt_req_write_handler(p_attr_req->conn_id, 
+                                                  p_attr_req->opcode, 
+                                                  &p_attr_req->data.write_req, 
+                                                  p_attr_req->len_requested, 
+                                                  p_error_handle);
 
              if ((GATT_REQ_WRITE == p_attr_req->opcode) &&
                  (WICED_BT_GATT_SUCCESS == gatt_status))
@@ -190,10 +201,11 @@ app_bt_gatt_req_cb (wiced_bt_gatt_attribute_request_t *p_attr_req)
 
         case GATT_REQ_READ_BY_TYPE:
             gatt_status =                                                      \
-            app_bt_gatt_req_read_by_type_handler(p_attr_req->conn_id,
-                                                       p_attr_req->opcode,
-                                                       &p_attr_req->data.read_by_type,
-                                                       p_attr_req->len_requested);
+            app_bt_gatt_req_read_by_type_handler(p_attr_req->conn_id, 
+                                                        p_attr_req->opcode, 
+                                                        &p_attr_req->data.read_by_type, 
+                                                        p_attr_req->len_requested, 
+                                                        p_error_handle);
             break;
 
         case GATT_HANDLE_VALUE_CONF:
@@ -206,6 +218,7 @@ app_bt_gatt_req_cb (wiced_bt_gatt_attribute_request_t *p_attr_req)
         default:
                 printf("ERROR: Unhandled GATT Connection Request case: %d\n",
                        p_attr_req->opcode);
+                gatt_status = WICED_BT_GATT_ERROR;
                 break;
     }
 
@@ -255,10 +268,11 @@ app_bt_gatt_conn_status_cb(wiced_bt_gatt_connection_status_t *p_conn_status)
  *
  */
 wiced_bt_gatt_status_t
-app_bt_gatt_req_read_handler( uint16_t conn_id,
-                                    wiced_bt_gatt_opcode_t opcode,
-                                    wiced_bt_gatt_read_t *p_read_req,
-                                    uint16_t len_req)
+app_bt_gatt_req_read_handler(uint16_t conn_id, 
+                             wiced_bt_gatt_opcode_t opcode, 
+                             wiced_bt_gatt_read_t *p_read_req, 
+                             uint16_t len_req, 
+                             uint16_t *p_error_handle)
 {
 
     gatt_db_lookup_table_t  *puAttribute;
@@ -266,12 +280,11 @@ app_bt_gatt_req_read_handler( uint16_t conn_id,
     uint8_t     *from;
     int          to_send;
 
+   *p_error_handle = p_read_req->handle;
 
     puAttribute = app_bt_find_by_handle(p_read_req->handle);
     if (NULL == puAttribute)
     {
-        wiced_bt_gatt_server_send_error_rsp(conn_id, opcode, p_read_req->handle,
-                                            WICED_BT_GATT_INVALID_HANDLE);
         return WICED_BT_GATT_INVALID_HANDLE;
     }
     attr_len_to_copy = puAttribute->cur_len;
@@ -281,8 +294,6 @@ app_bt_gatt_req_read_handler( uint16_t conn_id,
 
     if (p_read_req->offset >= puAttribute->cur_len)
     {
-        wiced_bt_gatt_server_send_error_rsp(conn_id, opcode, p_read_req->handle,
-                                            WICED_BT_GATT_INVALID_OFFSET);
         return WICED_BT_GATT_INVALID_OFFSET;
     }
 
@@ -312,12 +323,14 @@ app_bt_gatt_req_read_handler( uint16_t conn_id,
  *
  */
 wiced_bt_gatt_status_t
-app_bt_gatt_req_write_handler(uint16_t conn_id,
-                                    wiced_bt_gatt_opcode_t opcode,
-                                    wiced_bt_gatt_write_req_t *p_write_req,
-                                    uint16_t len_req)
+app_bt_gatt_req_write_handler(uint16_t conn_id, 
+                              wiced_bt_gatt_opcode_t opcode, 
+                              wiced_bt_gatt_write_req_t *p_write_req, 
+                              uint16_t len_req, 
+                              uint16_t *p_error_handle)
 {
     wiced_bt_gatt_status_t gatt_status = WICED_BT_GATT_INVALID_HANDLE;
+   *p_error_handle = p_write_req->handle;
 
     printf("write_handler: conn_id:%d Handle:0x%x offset:%d len:%d\n ",
            conn_id, p_write_req->handle,
@@ -355,10 +368,11 @@ app_bt_gatt_req_write_handler(uint16_t conn_id,
  *  wiced_bt_gatt_status_t                         : LE GATT status
  */
 wiced_bt_gatt_status_t
-app_bt_gatt_req_read_by_type_handler(uint16_t conn_id,
-                                           wiced_bt_gatt_opcode_t opcode,
-                                           wiced_bt_gatt_read_by_type_t *p_read_req,
-                                           uint16_t len_requested)
+app_bt_gatt_req_read_by_type_handler(uint16_t conn_id, 
+                                     wiced_bt_gatt_opcode_t opcode, 
+                                     wiced_bt_gatt_read_by_type_t *p_read_req, 
+                                     uint16_t len_requested, 
+                                     uint16_t *p_error_handle)
 {
     gatt_db_lookup_table_t *puAttribute;
     uint16_t last_handle = 0;
@@ -370,10 +384,6 @@ app_bt_gatt_req_read_by_type_handler(uint16_t conn_id,
     if (NULL == p_rsp)
     {
         printf("No memory, len_requested: %d!!\n",len_requested);
-        wiced_bt_gatt_server_send_error_rsp(conn_id,
-                                            opcode,
-                                            attr_handle,
-                                            WICED_BT_GATT_INSUF_RESOURCE);
         return WICED_BT_GATT_INSUF_RESOURCE;
     }
 
@@ -381,6 +391,7 @@ app_bt_gatt_req_read_by_type_handler(uint16_t conn_id,
      * between the start and end handles */
     while (WICED_TRUE)
     {
+       *p_error_handle = attr_handle;
         last_handle = attr_handle;
         attr_handle = wiced_bt_gatt_find_handle_by_type(attr_handle,
                                                         p_read_req->e_handle,
@@ -391,10 +402,6 @@ app_bt_gatt_req_read_by_type_handler(uint16_t conn_id,
         if ( NULL == (puAttribute = app_bt_find_by_handle(attr_handle)))
         {
             printf("found type but no attribute for %d \n",last_handle);
-            wiced_bt_gatt_server_send_error_rsp(conn_id,
-                                                opcode,
-                                                p_read_req->s_handle,
-                                                WICED_BT_GATT_ERR_UNLIKELY);
             app_bt_free_buffer(p_rsp);
             return WICED_BT_GATT_INVALID_HANDLE;
         }
@@ -422,10 +429,6 @@ app_bt_gatt_req_read_by_type_handler(uint16_t conn_id,
                "end_handle: 0x%04x  Type: 0x%04x\n", p_read_req->s_handle,
                                                        p_read_req->e_handle,
                                                        p_read_req->uuid.uu.uuid16);
-        wiced_bt_gatt_server_send_error_rsp(conn_id,
-                                            opcode,
-                                            p_read_req->s_handle,
-                                            WICED_BT_GATT_INVALID_HANDLE);
         app_bt_free_buffer(p_rsp);
         return WICED_BT_GATT_INVALID_HANDLE;
     }

@@ -268,13 +268,31 @@ cy_rslt_t app_bt_update_slot_data(void)
 cy_rslt_t app_bt_save_device_link_keys(wiced_bt_device_link_keys_t *link_key)
 {
     cy_rslt_t rslt = CY_RSLT_TYPE_ERROR;
-    memcpy(&bond_info.link_keys[bond_info.slot_data[NEXT_FREE_INDEX]],
-           (uint8_t *)(link_key), sizeof(wiced_bt_device_link_keys_t));
-
-    rslt = mtb_kvstore_write(&kvstore_obj, "bond_data", (uint8_t *)&bond_info, sizeof(bond_info));
-    if (CY_RSLT_SUCCESS != rslt)
+    uint8_t index;
+    /* Check if there is an entry of keys for the peer BDA in NVRAM */
+    index = app_bt_find_device_in_flash(link_key->bd_addr);
+    if(index != BOND_INDEX_MAX)
     {
-        printf("Flash Write Error,Error code: %" PRIu32 "\n", rslt );
+        memcpy(&bond_info.link_keys[index],
+               (uint8_t *)(link_key), sizeof(wiced_bt_device_link_keys_t));
+
+        rslt = mtb_kvstore_write(&kvstore_obj, "bond_data", (uint8_t *)&bond_info, sizeof(bond_info));
+        if (CY_RSLT_SUCCESS != rslt)
+        {
+            printf("Flash Write Error,Error code: %" PRIu32 "\n", rslt );
+        }
+    }
+    /* If there is no entry of keys in NVRAM, create a fresh entry in next free slot */
+    else
+    {
+        memcpy(&bond_info.link_keys[bond_info.slot_data[NEXT_FREE_INDEX]],
+               (uint8_t *)(link_key), sizeof(wiced_bt_device_link_keys_t));
+
+        rslt = mtb_kvstore_write(&kvstore_obj, "bond_data", (uint8_t *)&bond_info, sizeof(bond_info));
+        if (CY_RSLT_SUCCESS != rslt)
+        {
+            printf("Flash Write Error,Error code: %" PRIu32 "\n", rslt );
+        }
     }
     return rslt;
 }
