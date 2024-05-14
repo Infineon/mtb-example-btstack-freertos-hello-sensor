@@ -7,7 +7,7 @@
 #
 ################################################################################
 # \copyright
-# Copyright 2018-2023, Cypress Semiconductor Corporation (an Infineon company)
+# Copyright 2018-2024, Cypress Semiconductor Corporation (an Infineon company)
 # SPDX-License-Identifier: Apache-2.0
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,7 +69,6 @@ CONFIG=Debug
 VERBOSE=
 
 # Optionally enable app and Bluetooth protocol traces and route to BTSpy
-# Not applicable for CYW920829M2EVK-02
 ENABLE_SPY_TRACES = 0
 # Specify the flash region to be used as NVRAM for bond data storage
 USE_INTERNAL_FLASH = 0
@@ -81,7 +80,7 @@ ENABLE_SPY_TRACES = 0
 USE_INTERNAL_FLASH = 1
 endif
 
-ifeq ($(TARGET), $(filter $(TARGET), APP_CY8CKIT-062-WIFI-BT APP_CYW9P62S1-43438EVB-01 APP_CYW9P62S1-43012EVB-01 APP_CY8CKIT-062S2-43012 APP_CY8CPROTO-062S3-4343W APP_CY8CEVAL-062S2-LAI-4373M2 APP_CY8CPROTO-062-4343W APP_CY8CEVAL-062S2-LAI-43439M2 APP_CY8CPROTO-062S2-43439 APP_CY8CEVAL-062S2-MUR-4373M2 APP_CY8CEVAL-062S2-MUR-4373EM2))
+ifeq ($(TARGET), $(filter $(TARGET), APP_CY8CKIT-062-WIFI-BT APP_CYW9P62S1-43438EVB-01 APP_CYW9P62S1-43012EVB-01 APP_CY8CKIT-062S2-43012 APP_CY8CPROTO-062S3-4343W APP_CY8CEVAL-062S2-LAI-4373M2 APP_CY8CPROTO-062-4343W APP_CY8CEVAL-062S2-LAI-43439M2 APP_CY8CPROTO-062S2-43439 APP_CY8CEVAL-062S2-MUR-4373M2 APP_CY8CEVAL-062S2-MUR-4373EM2 APP_CY8CEVAL-062S2-CYW43022CUB))
 USE_INTERNAL_FLASH = 1
 endif
 
@@ -182,11 +181,13 @@ CY_GETLIBS_SHARED_PATH=../
 #
 CY_GETLIBS_SHARED_NAME=mtb_shared
 
-# Absolute path to the compiler's "bin" directory.
+# Absolute path to the compiler's "bin" directory. The variable name depends on the
+# toolchain used for the build. Refer to the ModusToolbox user guide to get the correct
+# variable name for the toolchain used in your build.
 #
 # The default depends on the selected TOOLCHAIN (GCC_ARM uses the ModusToolbox
 # software provided compiler by default).
-CY_COMPILER_PATH=
+CY_COMPILER_GCC_ARM_DIR=
 
 
 # Locate ModusToolbox helper tools folders in default installation

@@ -9,7 +9,7 @@
  *
  *
  *******************************************************************************
- * Copyright 2021-2023, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2021-2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -248,7 +248,7 @@ void app_bt_interrupt_config(void)
     /* Initialize the user button */
     result = cyhal_gpio_init(CYBSP_USER_BTN,
                              CYHAL_GPIO_DIR_INPUT,
-                             CYHAL_GPIO_DRIVE_PULLDOWN,
+                             CYHAL_GPIO_DRIVE_PULLUP,
                              CYBSP_BTN_OFF);
     /* Configure GPIO interrupt */
     cyhal_gpio_register_callback(CYBSP_USER_BTN, &btn_cb_data);

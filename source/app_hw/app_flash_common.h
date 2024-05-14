@@ -8,7 +8,7 @@
  *
  *
  *******************************************************************************
- * Copyright 2021-2023, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2021-2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -56,9 +56,6 @@
 /* For external flash */
 #define  QSPI_BUS_FREQ                       (50000000l)
 #define  QSPI_GET_ERASE_SIZE                 (0)
-
-/* SMIF configuration structure */
-extern cy_stc_smif_mem_config_t*            smifMemConfigs[];
 
 #endif
 /* For internal flash */

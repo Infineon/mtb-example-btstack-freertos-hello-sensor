@@ -1,4 +1,4 @@
-/******************************************************************************
+/*****************************************************************************
 * File Name: main.c
 *
 * Description: This is the source code for the FreeRTOS
@@ -7,7 +7,7 @@
 * Related Document: See README.md
 *
 *******************************************************************************
-* Copyright 2021-2023, Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2021-2024, Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
 *
 * This software, including source code, documentation and related
