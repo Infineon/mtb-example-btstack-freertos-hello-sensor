@@ -69,6 +69,7 @@ CONFIG=Debug
 VERBOSE=
 
 # Optionally enable app and Bluetooth protocol traces and route to BTSpy
+# add airoc-hci-transport from library manager before enabling
 ENABLE_SPY_TRACES = 0
 # Specify the flash region to be used as NVRAM for bond data storage
 USE_INTERNAL_FLASH = 0
@@ -86,6 +87,8 @@ endif
 
 ifeq ($(ENABLE_SPY_TRACES),1)
 DEFINES+=ENABLE_BT_SPY_LOG DEBUG_UART_BAUDRATE=3000000
+else
+DEFINES+=ENABLE_AIROC_HCI_TRANSPORT_PRINTF=0
 endif
 
 ifeq ($(USE_INTERNAL_FLASH),1)
