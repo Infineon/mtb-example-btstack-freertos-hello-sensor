@@ -4,26 +4,24 @@ This code example demonstrates the implementation of a Bluetooth&reg; LE custom 
 
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-btstack-freertos-hello-sensor)
 
-[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzUxNTAiLCJTcGVjIE51bWJlciI6IjAwMi0zNTE1MCIsIkRvYyBUaXRsZSI6IkJUU1RBQ0s6IEJsdWV0b290aCZyZWc7IExFIGhlbGxvIHNlbnNvciIsInJpZCI6ImpydGgiLCJEb2MgdmVyc2lvbiI6IjQuMS4wIiwiRG9jIExhbmd1YWdlIjoiRW5nbGlzaCIsIkRvYyBEaXZpc2lvbiI6Ik1DRCIsIkRvYyBCVSI6IklDVyIsIkRvYyBGYW1pbHkiOiJCVEFCTEUifQ==)
+[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzUxNTAiLCJTcGVjIE51bWJlciI6IjAwMi0zNTE1MCIsIkRvYyBUaXRsZSI6IkJUU1RBQ0s6IEJsdWV0b290aCZyZWc7IExFIGhlbGxvIHNlbnNvciIsInJpZCI6ImhlZ2RlbmlkaGkiLCJEb2MgdmVyc2lvbiI6IjQuMi4wIiwiRG9jIExhbmd1YWdlIjoiRW5nbGlzaCIsIkRvYyBEaXZpc2lvbiI6Ik1DRCIsIkRvYyBCVSI6IklDVyIsIkRvYyBGYW1pbHkiOiJCVEFCTEUifQ==)
 
 ## Requirements
 
-- [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) v3.2 or later (tested with v3.2)
+- [ModusToolbox&trade;](https://www.infineon.com/modustoolbox) v3.2 or later (tested with v3.3)
 - Board support package (BSP) minimum required version for :
-   - CY8CKIT-062-BLE : v4.0.0
-   - CY8CPROTO-063-BLE : v4.0.0
-   - CYBLE-416045-EVAL : v4.0.0
-   - CYW920829M2EVK-02 : v2.0.0
-   - CYW989829M2EVB-01 : v2.0.0
-   - CYW989829M2EVB-03 : v2.0.0
+   - PSoC&trade; 6 MCU: v5.0.0
+   - XMC7000 MCU: v2.3.0
+   - CY8CKIT-062-BLE/CY8CPROTO-063-BLE/CYBLE-416045-EVAL  : v4.0.0
+   - CYW920829M2EVK-02/CYW989829M2EVB-01/CYW989829M2EVB-03 : v2.0.0
 - Programming language: C
-- Associated parts: [AIROC&trade; CYW20829 Bluetooth&reg; LE SoC](https://www.infineon.com/cms/en/product/promopages/airoc20829), [PSoC&trade; 6 MCU with AIROC&trade; Bluetooth&reg; LE](https://www.infineon.com/cms/en/product/microcontroller/32-bit-psoc-arm-cortex-microcontroller/psoc-6-32-bit-arm-cortex-m4-mcu/psoc-63/)
+- Associated parts: All [XMC7000 MCU](https://www.infineon.com/cms/en/product/microcontroller/32-bit-industrial-microcontroller-based-on-arm-cortex-m/32-bit-xmc7000-industrial-microcontroller-arm-cortex-m7/) and [AIROC&trade; CYW20829 Bluetooth&reg; LE SoC](https://www.infineon.com/cms/en/product/promopages/airoc20829), [PSoC&trade; 6 MCU with AIROC&trade; Bluetooth&reg; LE](https://www.infineon.com/cms/en/product/microcontroller/32-bit-psoc-arm-cortex-microcontroller/psoc-6-32-bit-arm-cortex-m4-mcu/psoc-63/)
 
 ## Supported toolchains (make variable 'TOOLCHAIN')
 
 - GNU Arm&reg; Embedded Compiler v11.3.1 (`GCC_ARM`) - Default value of `TOOLCHAIN`
-- Arm&reg; Compiler v6.16 (`ARM`)
-- IAR C/C++ Compiler v9.30.1 (`IAR`)
+- Arm&reg; Compiler v6.22 (`ARM`)
+- IAR C/C++ Compiler v9.50.2 (`IAR`)
 
 ## Supported kits (make variable 'TARGET')
 
@@ -41,6 +39,7 @@ This code example demonstrates the implementation of a Bluetooth&reg; LE custom 
 - [EZ-BLE Arduino Evaluation Board](https://www.infineon.com/cms/en/product/evaluation-boards/cyble-416045-eval/) (`CYBLE-416045-EVAL`)
 - [PSoC&trade; 62S2 Wi-Fi Bluetooth&reg; Prototyping Kit](https://www.infineon.com/CY8CPROTO-062-43439) (`CY8CPROTO-062S2-43439`)
 - [PSoC&trade; 6 AI Evaluation Kit](https://www.infineon.com/CY8CKIT-062S2-AI) (`CY8CKIT-062S2-AI`)
+- [XMC7200 Evaluation Kit](https://www.infineon.com/KIT_XMC72_EVK) (`KIT_XMC72_EVK_MUR_43439M2`)
 
 ## Hardware setup
 
@@ -367,6 +366,7 @@ Document title: *CE235150* – *Bluetooth&reg; LE hello sensor*
  3.8.0   | Added support for CYW989829M2EVB-03
  4.0.0   | BSP and BTStack-integration major update for BT Firmware as a separate asset and removal of combo devices as doesn't support fw as separate asset 
  4.1.0   | Added support for CY8CEVAL-062S2-CYW955513SDM2WLIPA
+ 4.2.0   | Added support for KIT_XMC72_EVK_MUR_43439M2
 
 <br>
 
