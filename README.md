@@ -4,7 +4,7 @@ This code example demonstrates the implementation of a Bluetooth&reg; LE custom 
 
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-btstack-freertos-hello-sensor)
 
-[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzUxNTAiLCJTcGVjIE51bWJlciI6IjAwMi0zNTE1MCIsIkRvYyBUaXRsZSI6IkJUU1RBQ0s6IEJsdWV0b290aCZyZWc7IExFIGhlbGxvIHNlbnNvciIsInJpZCI6ImhlZ2RlbmlkaGkiLCJEb2MgdmVyc2lvbiI6IjQuMi4xIiwiRG9jIExhbmd1YWdlIjoiRW5nbGlzaCIsIkRvYyBEaXZpc2lvbiI6Ik1DRCIsIkRvYyBCVSI6IklDVyIsIkRvYyBGYW1pbHkiOiJCVEFCTEUifQ==)
+[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzUxNTAiLCJTcGVjIE51bWJlciI6IjAwMi0zNTE1MCIsIkRvYyBUaXRsZSI6IkJUU1RBQ0s6IEJsdWV0b290aCZyZWc7IExFIGhlbGxvIHNlbnNvciIsInJpZCI6ImhlZ2RlbmlkaGkiLCJEb2MgdmVyc2lvbiI6IjUuMC4wIiwiRG9jIExhbmd1YWdlIjoiRW5nbGlzaCIsIkRvYyBEaXZpc2lvbiI6Ik1DRCIsIkRvYyBCVSI6IklDVyIsIkRvYyBGYW1pbHkiOiJCVEFCTEUifQ==)
 
 
 ## Requirements
@@ -14,7 +14,7 @@ This code example demonstrates the implementation of a Bluetooth&reg; LE custom 
    - PSOC&trade; 6 MCU: v5.0.0
    - XMC7000 MCU: v2.3.0
    - CY8CKIT-062-BLE/CY8CPROTO-063-BLE/CYBLE-416045-EVAL: v4.0.0
-   - CYW920829M2EVK-02/CYW989829M2EVB-01/CYW989829M2EVB-03: v2.0.0
+   - CYW920829M2EVK-02/CYW989829M2EVB-01: v3.0.0
 - Programming language: C
 - Associated parts: All [XMC7000 MCU](https://www.infineon.com/cms/en/product/microcontroller/32-bit-industrial-microcontroller-based-on-arm-cortex-m/32-bit-xmc7000-industrial-microcontroller-arm-cortex-m7/), [AIROC&trade; CYW20829 Bluetooth&reg; LE SoC](https://www.infineon.com/cms/en/product/promopages/airoc20829), [PSOC&trade; 6 MCU with AIROC&trade; Bluetooth&reg; LE](https://www.infineon.com/cms/en/product/microcontroller/32-bit-psoc-arm-cortex-microcontroller/psoc-6-32-bit-arm-cortex-m4-mcu/psoc-63/)
 
@@ -29,7 +29,7 @@ This code example demonstrates the implementation of a Bluetooth&reg; LE custom 
 ## Supported kits (make variable 'TARGET')
 
 - [AIROC&trade; CYW20829 Bluetooth&reg; LE Evaluation Kit](https://www.infineon.com/CYW920829M2EVK-02) (`CYW920829M2EVK-02`) – Default value of `TARGET`
-- [AIROC&trade; CYW89829 Bluetooth&reg; LE Evaluation Kit](https://www.infineon.com/cms/en/product/wireless-connectivity/airoc-bluetooth-le-bluetooth-multiprotocol/airoc-bluetooth-le/cyw89829) (`CYW989829M2EVB-01`, `CYW989829M2EVB-03`)
+- [AIROC&trade; CYW89829 Bluetooth&reg; LE Evaluation Kit](https://www.infineon.com/cms/en/product/wireless-connectivity/airoc-bluetooth-le-bluetooth-multiprotocol/airoc-bluetooth-le/cyw89829) (`CYW989829M2EVB-01`)
 - [PSOC&trade; 6 Wi-Fi Bluetooth&reg; Prototyping Kit](https://www.infineon.com/CY8CPROTO-062-4343W) (`CY8CPROTO-062-4343W`)
 - [PSOC&trade; 6 Wi-Fi Bluetooth&reg; Pioneer Kit](https://www.infineon.com/CY8CKIT-062-WIFI-BT) (`CY8CKIT-062-WIFI-BT`)
 - [PSOC&trade; 62S2 Wi-Fi Bluetooth&reg; Pioneer Kit](https://www.infineon.com/CY8CKIT-062S2-43012) (`CY8CKIT-062S2-43012`, `CY8CEVAL-062S2-CYW955513SDM2WLIPA`)
@@ -394,6 +394,7 @@ Document title: *CE235150* – *BTSTACK: Bluetooth&reg; LE hello sensor*
  4.1.0   | Added support for CY8CEVAL-062S2-CYW955513SDM2WLIPA
  4.2.0   | Added support for KIT_XMC72_EVK_MUR_43439M2
  4.2.1   | Minor Makefile updates
+ 5.0.0   | Remove support for CYW989829M2EVB-03 and updated btstack-integration with version 6.X
 <br>
 
 
